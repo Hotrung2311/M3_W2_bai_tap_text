@@ -1,0 +1,163 @@
+PS C:\Users\ADMIN> mysql -u root -p                                                  Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 58
+Server version: 8.0.20 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create databases luyen_tap_ham_thong_dung;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'databases luyen_tap_ham_thong_dung' at line 1
+mysql> create database luyen_tap_ham_thong_dung;
+Query OK, 1 row affected (0.38 sec)
+
+mysql> use luyen_tap_ham_thong_dung;
+Database changed
+mysql> create table table_luyen_tap(
+    -> id int auto_increment
+    -> ten varchar(20)
+    -> tuoi int
+    -> khoahoc varchar(20)
+    -> sotien bigint
+    -> );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ten varchar(20)
+tuoi int
+khoahoc varchar(20)
+sotien bigint
+)' at line 3
+mysql> create table table_luyen_tap(
+    -> id int auto_increment
+    -> ten varchar(20)
+    -> tuoi int
+    -> khoahoc varchar(20)
+    -> sotien varchar(20)
+    -> );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ten varchar(20)
+tuoi int
+khoahoc varchar(20)
+sotien varchar(20)
+)' at line 3
+mysql> create table table_luyen_tap(
+    -> id int auto_increment,
+    -> ten varchar(20),
+    -> tuoi int,
+    -> khoahoc varchar(20),
+    -> sotien varchar(20)
+    -> );
+ERROR 1075 (42000): Incorrect table definition; there can be only one auto column and it must be defined as a key
+mysql> create table table_luyen_tap(
+    -> id int auto_increment primary key,
+    -> ten varchar(20),
+    -> tuoi int,
+    -> khoahoc varchar(20),
+    -> sotien varchar(20)
+    -> );
+Query OK, 0 rows affected (0.60 sec)
+
+mysql> show tables;
++------------------------------------+
+| Tables_in_luyen_tap_ham_thong_dung |
++------------------------------------+
+| table_luyen_tap                    |
++------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> describe table_luyen_tap;
++---------+-------------+------+-----+---------+----------------+
+| Field   | Type        | Null | Key | Default | Extra          |
++---------+-------------+------+-----+---------+----------------+
+| id      | int         | NO   | PRI | NULL    | auto_increment |
+| ten     | varchar(20) | YES  |     | NULL    |                |
+| tuoi    | int         | YES  |     | NULL    |                |
+| khoahoc | varchar(20) | YES  |     | NULL    |                |
+| sotien  | varchar(20) | YES  |     | NULL    |                |
++---------+-------------+------+-----+---------+----------------+
+5 rows in set (0.37 sec)
+
+mysql> insert into table_luyen_tap (ten, tuoi, khoahoc, sotien) values (Hoang, 21, cntt, 400000);
+ERROR 1054 (42S22): Unknown column 'Hoang' in 'field list'
+mysql> insert into table_luyen_tap (ten, tuoi, khoahoc, sotien) values ('Hoang', 21, 'cntt', '400000');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * table_luyen_tap;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'table_luyen_tap' at line 1
+mysql> select * from table_luyen_tap;
++----+-------+------+---------+--------+
+| id | ten   | tuoi | khoahoc | sotien |
++----+-------+------+---------+--------+
+|  1 | Hoang |   21 | cntt    | 400000 |
++----+-------+------+---------+--------+
+1 row in set (0.00 sec)
+
+mysql> insert into table_luyen_tap (ten, tuoi, khoahoc, sotien) values ('Viet', 19, 'dvvt', '320000');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into table_luyen_tap (ten, tuoi, khoahoc, sotien) values ('Thanh', 18, 'ktdn', '400000');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into table_luyen_tap (ten, tuoi, khoahoc, sotien) values ('Nhan', 19, 'ck', '450000');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into table_luyen_tap (ten, tuoi, khoahoc, sotien) values ('Huong', 20, 'tcnh', '500000');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into table_luyen_tap (ten, tuoi, khoahoc, sotien) values ('Huong', 20, 'tcnh', '200000');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from table_luyen_tap;
++----+-------+------+---------+--------+
+| id | ten   | tuoi | khoahoc | sotien |
++----+-------+------+---------+--------+
+|  1 | Hoang |   21 | cntt    | 400000 |
+|  2 | Viet  |   19 | dvvt    | 320000 |
+|  3 | Thanh |   18 | ktdn    | 400000 |
+|  4 | Nhan  |   19 | ck      | 450000 |
+|  5 | Huong |   20 | tcnh    | 500000 |
+|  6 | Huong |   20 | tcnh    | 200000 |
++----+-------+------+---------+--------+
+6 rows in set (0.00 sec)
+
+mysql> select * from table_luyen_tap
+    -> where name = "huong";
+ERROR 1054 (42S22): Unknown column 'name' in 'where clause'
+mysql> select * from table_luyen_tap
+    -> where ten = "huong";
++----+-------+------+---------+--------+
+| id | ten   | tuoi | khoahoc | sotien |
++----+-------+------+---------+--------+
+|  5 | Huong |   20 | tcnh    | 500000 |
+|  6 | Huong |   20 | tcnh    | 200000 |
++----+-------+------+---------+--------+
+2 rows in set (0.00 sec)
+
+mysql> select ten, sum(sotien) as tong_tien
+    -> from table_luyen_tap
+    -> where ten = "huong"
+    -> group by ten;
++-------+-----------+
+| ten   | tong_tien |
++-------+-----------+
+| Huong |    700000 |
++-------+-----------+
+1 row in set (0.00 sec)
+
+mysql> select ten
+    -> from table_luyen_tap
+    -> group by ten;
++-------+
+| ten   |
++-------+
+| Hoang |
+| Viet  |
+| Thanh |
+| Nhan  |
+| Huong |
++-------+
+5 rows in set (0.00 sec)
+
+mysql>  
