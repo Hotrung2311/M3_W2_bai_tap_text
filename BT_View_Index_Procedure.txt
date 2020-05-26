@@ -1,0 +1,264 @@
+PS C:\Users\ADMIN> mysql -u root -p                                                                                                                                         Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 69
+Server version: 8.0.20 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database demo;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use demo;
+Database changed
+mysql> create table products(
+    -> id int,
+    -> productCode int,
+    -> productName varchar(50),
+    -> productPrice varchar(20),
+    -> productAmount int,
+    -> productDescription varchar(500),
+    -> productStatus varchar(50));
+Query OK, 0 rows affected (0.54 sec)
+
+mysql> create unique index productCode_index
+    -> on products(productCode);
+Query OK, 0 rows affected (0.40 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> create index composite_index
+    -> on products(productName, productPrice);
+Query OK, 0 rows affected (0.04 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> explain create unique index productCode_index
+    -> on products(productCode);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'create unique index productCode_index
+on products(productCode)' at line 1
+mysql> create view products_view as
+    -> select productCode, productName, productPrice, productStatus
+    -> from products;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from products_view;
+Empty set (0.00 sec)
+
+mysql> create or replace view products_view as
+    -> select productCode, productName, productPrice, productStatus, productAmount
+    -> from products;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> describe products_view;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| productCode   | int         | YES  |     | NULL    |       |
+| productName   | varchar(50) | YES  |     | NULL    |       |
+| productPrice  | varchar(20) | YES  |     | NULL    |       |
+| productStatus | varchar(50) | YES  |     | NULL    |       |
+| productAmount | int         | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+5 rows in set (0.37 sec)
+
+mysql> drop view products_view;
+Query OK, 0 rows affected (0.35 sec)
+
+mysql> delimiter /
+mysql> create procedure getAllProductInfo()
+    -> begin
+    -> select * from products;
+    -> end /
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> delimiter /
+mysql> create procedure addProduct(in id int,
+    -> in productCode int,
+    -> productName varchar(50),
+    -> productPrice varchar(20),
+    -> productAmount int,
+    -> productDescription varchar(500),
+    -> productStatus varchar(50))
+    -> ;
+    -> /
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 7
+mysql> delimiter /
+mysql> create procedure addProduct(in id int,
+    -> in productCode int,
+    -> in productName varchar(50),
+    -> in productPrice varchar(20),
+    -> in productAmount int,
+    -> in productDescription varchar(500),
+    -> in productStatus varchar(50))
+    -> begin
+    -> insert into products (id, productCode, productName, productPrice, productAmount, productDescription, productStatus)
+    -> values (id, productCode, productName, productPrice, productAmount, productDescription, productStatus);
+    -> end /
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> call addProduct(1, 123, 'Buoi', '20000', 3, 'abc', 'a') /
+Query OK, 1 row affected (0.02 sec)
+
+mysql> call getallproductinfo() /
++------+-------------+-------------+--------------+---------------+--------------------+---------------+
+| id   | productCode | productName | productPrice | productAmount | productDescription | productStatus |
++------+-------------+-------------+--------------+---------------+--------------------+---------------+
+|    1 |         123 | Buoi        | 20000        |             3 | abc                | a             |
++------+-------------+-------------+--------------+---------------+--------------------+---------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> delimiter /
+mysql> create procedure deletebyid(in id int)
+    -> begin
+    -> delete from products where products.id = id;
+    -> end /
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> call addProduct(2, 234, 'Cam', '20000', 3, 'def', 'b') /
+Query OK, 1 row affected (0.02 sec)
+
+mysql> call getallproductinfo() /
++------+-------------+-------------+--------------+---------------+--------------------+---------------+
+| id   | productCode | productName | productPrice | productAmount | productDescription | productStatus |
++------+-------------+-------------+--------------+---------------+--------------------+---------------+
+|    1 |         123 | Buoi        | 20000        |             3 | abc                | a             |
+|    2 |         234 | Cam         | 20000        |             3 | def                | b             |
++------+-------------+-------------+--------------+---------------+--------------------+---------------+
+2 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> call deletebyid(1) /
+Query OK, 1 row affected (0.02 sec)
+
+mysql> call getallproductinfo() /
++------+-------------+-------------+--------------+---------------+--------------------+---------------+
+| id   | productCode | productName | productPrice | productAmount | productDescription | productStatus |
++------+-------------+-------------+--------------+---------------+--------------------+---------------+
+|    2 |         234 | Cam         | 20000        |             3 | def                | b             |
++------+-------------+-------------+--------------+---------------+--------------------+---------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> delimiter /
+mysql> create procedure editbyid (
+    -> in productcode int,
+    -> in productname varchar(50),
+    -> in productprice varchar(20),
+    -> in productamount int,
+    -> in productdescription varchar(500),
+    -> in productstatus varchar(20))
+    -> begin
+    -> a;
+    -> end /
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ';
+end' at line 9
+mysql> delimiter /
+mysql> create procedure editbyid (
+    -> in id int,
+    -> in productcode int,
+    -> in productname varchar(50),
+    -> in productprice varchar(20),
+    -> in productamount int,
+    -> in productdescription varchar(500),
+    -> in productstatus varchar(20))
+    -> begin
+    -> update products
+    -> set products.productcode = productcode,
+    -> products.productname = productname,
+    -> products.productprice = productprice,
+    -> product.productamount = productamount,
+    -> product.description = productdescription,
+    -> products.productstatus = productstatus
+    -> where products.id = id;
+    -> end /
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> call editbyid(2, 234, 'chuoi', '20000', 3, 'def', 'b') /
+ERROR 1054 (42S22): Unknown column 'product.productamount' in 'field list'
+mysql> delimiter /
+mysql> create procedure editbyid (
+    -> in id int,
+    -> in productcode int,
+    -> in productname varchar(50),
+    -> in productprice varchar(20),
+    -> in productamount int,
+    -> in productdescription varchar(500),
+    -> in productstatus varchar(20))
+    -> begin
+    -> update products
+    -> set products.productcode = productcode,
+    -> products.productname = productname,
+    -> products.productprice = productprice,
+    -> products.productamount = productamount,
+    -> products.description = productdescription,
+    -> products.productstatus = productstatus
+    -> where products.id = id;
+    -> end /
+ERROR 1304 (42000): PROCEDURE editbyid already exists
+mysql> delimiter /
+mysql> create procedure editbyid1 (
+    -> in id int,
+    -> in productcode int,
+    -> in productname varchar(50),
+    -> in productprice varchar(20),
+    -> in productamount int,
+    -> in productdescription varchar(500),
+    -> in productstatus varchar(20))
+    -> begin
+    -> update products
+    -> set products.productcode = productcode,
+    -> products.productname = productname,
+    -> products.productprice = productprice,
+    -> products.productamount = productamount,
+    -> products.description = productdescription,
+    -> products.productstatus = productstatus
+    -> where products.id = id;
+    -> end /
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call editbyid(2, 234, 'chuoi', '28000', 3, 'mno', 'k') /
+ERROR 1054 (42S22): Unknown column 'product.productamount' in 'field list'
+mysql> call editbyid1(2, 234, 'chuoi', '28000', 3, 'mno', 'k') /
+ERROR 1054 (42S22): Unknown column 'products.description' in 'field list'
+mysql> describe products;
+    -> /
++--------------------+--------------+------+-----+---------+-------+
+| Field              | Type         | Null | Key | Default | Extra |
++--------------------+--------------+------+-----+---------+-------+
+| id                 | int          | YES  |     | NULL    |       |
+| productCode        | int          | YES  | UNI | NULL    |       |
+| productName        | varchar(50)  | YES  | MUL | NULL    |       |
+| productPrice       | varchar(20)  | YES  |     | NULL    |       |
+| productAmount      | int          | YES  |     | NULL    |       |
+| productDescription | varchar(500) | YES  |     | NULL    |       |
+| productStatus      | varchar(50)  | YES  |     | NULL    |       |
++--------------------+--------------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+
+mysql> create procedure editbyid2 (in id int, in productcode int, in productname varchar(50), in productprice varchar(20), in productamount int, in productdescription varchar(500), in productstatus varchar(20))
+    -> begin
+    -> update products set products.productcode = productcode,products.productname = productname,products.productprice = productprice, products.productamount = productamount, products.productdescription = productdescription,products.productstatus = productstatus
+    -> where products.id = id;
+    -> end /
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call editbyid2(2, 234, 'chuoi', '28000', 3, 'mno', 'k') /
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from products /
++------+-------------+-------------+--------------+---------------+--------------------+---------------+
+| id   | productCode | productName | productPrice | productAmount | productDescription | productStatus |
++------+-------------+-------------+--------------+---------------+--------------------+---------------+
+|    2 |         234 | chuoi       | 28000        |             3 | mno                | k             |
++------+-------------+-------------+--------------+---------------+--------------------+---------------+
+1 row in set (0.00 sec)
+
+mysql>  
