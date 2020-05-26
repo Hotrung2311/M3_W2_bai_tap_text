@@ -1,0 +1,113 @@
+PS C:\Users\ADMIN> mysql -u root -p                                                                                                                                         Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 67
+Server version: 8.0.20 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use classicmodels;
+Database changed
+mysql> show tables;
++-------------------------+
+| Tables_in_classicmodels |
++-------------------------+
+| customers               |
+| employees               |
+| offices                 |
+| orderdetails            |
+| orders                  |
+| payments                |
+| productlines            |
+| products                |
++-------------------------+
+8 rows in set (0.00 sec)
+
+mysql> delimiter /
+mysql> create procedure getCusById (in cusNum int(11))
+    -> begin
+    -> select * from customers where customerNumber = cusNum;
+    -> end /
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+mysql> call getcusbyid(175);
+    -> /
++----------------+-----------------+-----------------+------------------+------------+---------------------+--------------+-------------+-------+------------+---------+------------------------+-------------+
+| customerNumber | customerName    | contactLastName | contactFirstName | phone      | addressLine1        | addressLine2 | city        | state | postalCode | country | salesRepEmployeeNumber | creditLimit |
++----------------+-----------------+-----------------+------------------+------------+---------------------+--------------+-------------+-------+------------+---------+------------------------+-------------+
+|            175 | Gift Depot Inc. | King            | Julie            | 2035552570 | 25593 South Bay Ln. | NULL         | Bridgewater | CT    | 97562      | USA     |                   1323 |    84300.00 |
++----------------+-----------------+-----------------+------------------+------------+---------------------+--------------+-------------+-------+------------+---------+------------------------+-------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> delimiter /
+mysql> create procedure getCusCountByCity(
+    -> in city varchar(50),
+    -> out total int)
+    -> begin
+    -> select count(customerNumber)
+    -> into total
+    -> from customers
+    -> where customers.city = city;
+    -> end /
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call getCusByCity('Bridgewater', @customers);
+    -> /
+ERROR 1305 (42000): PROCEDURE classicmodels.getCusByCity does not exist
+mysql> call getCusCountByCity('Bridgewater', @customers) /
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select @customers;
+    -> /
++------------+
+| @customers |
++------------+
+|          1 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> delimiter /
+mysql> create procedure setCounter (
+    -> intout counter int,
+    -> in inc int)
+    -> begin
+    -> set counter = counter + inc;
+    -> end /
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'counter int,
+in inc int)
+begin
+set counter = counter + inc;
+end' at line 2
+mysql> delimiter /
+mysql> create procedure setCounter (
+    -> inout counter int,
+    -> in inc int)
+    -> begin
+    -> set counter = counter + inc;
+    -> end /
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> set @counter = 0;
+    -> /
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call setCounter(@counter, 2) /
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select @counter;
+    -> /
++----------+
+| @counter |
++----------+
+|        2 |
++----------+
+1 row in set (0.00 sec)
+
+mysql>  
